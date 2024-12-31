@@ -63,3 +63,11 @@ class CA:
 
     #crear el certificado firmado por la CA
     self._create_certificate(csr.subject)
+
+    with open(os.path.join(ROOT_CERT_DIR, "ca_cert.pem"), "rb") as f:
+      certificate = x509.load_pem_x509_certificate(f.read())
+
+    return {
+      'message': 'Succesful operation',
+      'certificate': str(certificate)
+    }
