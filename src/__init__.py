@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from flask import Flask
-from src.blueprints import csr
+from src.blueprints.csr import csr
 import os
 
 #usar las variables de entorno
