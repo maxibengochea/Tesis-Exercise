@@ -4,21 +4,25 @@ from flask import request, jsonify
 from src.validators.csr import CSRValidator
 from src.client import Client
 
-@csr.route('/issue_csr', methods=['POST'])
+@csr.route('/issue_csr', methods=['GET'])
 def issue_csr():
+  #campos de la clase 'Client'
+  fields = ['country', 'state', 'locality', 'organization_name', 'common_name']
+
   #capturar el body
   data = request.get_json()
   body = data if type(data) == dict else {}
+  new_body = {key: value for key, value in body if key in fields}
 
   #validaciones
-  validations = [CSRValidator.country(body), CSRValidator.locality(body), CSRValidator.state(body), 
-                 CSRValidator.organization_name(body), CSRValidator.common_name(body)]
+  validations = [CSRValidator.country(new_body), CSRValidator.locality(new_body), CSRValidator.state(new_body), 
+                 CSRValidator.organization_name(body), CSRValidator.common_name(new_body)]
   
   for validation in validations:
     if not validation['valid']:
       return jsonify(validation)
 
-  client = Client(body['country'], body['state'], body['locality'], body['organization_name'], body['common_name'])
+  client = Client(**new_body)
   csr = client.issue_csr()
   return ca.issue_certificate(csr)
 
