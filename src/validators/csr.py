@@ -3,12 +3,8 @@ class CSRValidator:
   def valid(body: dict, field: str):
     valid = True
     message = 'Succesful operation'
-    
-    if not field in body.keys():
-      valid = False
-      message = f"'{field}' field is required"
 
-    if body[field].strip() == '':
+    if field in body.keys() and body[field].strip() == '':
       valid = False
       message = f"'{field}' field cannot be empty"
 
