@@ -6,10 +6,8 @@ from cryptography.hazmat.primitives import serialization, hashes
 import os
 
 # Directorios para guardar los certificados y claves
-ROOT_CERT_DIR = "src/assets/root_cert"
-CERTS_DIR = "src/assets/certs"
-os.makedirs(ROOT_CERT_DIR, exist_ok=True)
-os.makedirs(CERTS_DIR, exist_ok=True)
+CA_ROOT = 'CA'
+os.makedirs(CA_ROOT, exist_ok=True)
 
 class CA:
   def __init__(self):
@@ -32,7 +30,7 @@ class CA:
   
   def _create_certificate(self, subject: x509.Name, root=False):
     #ruta del certificado
-    cert_dir = os.path.join(ROOT_CERT_DIR, "ca_cert.pem") if root else os.path.join(CERTS_DIR, f"{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}_cert.pem") 
+    cert_dir = os.path.join(CA_ROOT, "root_cert.pem") if root else os.path.join(f"{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}", "cert.pem") 
 
     certificate = x509.CertificateBuilder()
     certificate = certificate.subject_name(subject)
@@ -45,7 +43,7 @@ class CA:
     certificate = certificate.sign(self._private_key, hashes.SHA256())
 
     #guardar la clave privada
-    with open(os.path.join(ROOT_CERT_DIR, "ca_key.pem"), "wb") as f:
+    with open(os.path.join(CA_ROOT, "key.pem"), "wb") as f:
         f.write(self._private_key.private_bytes(encoding=serialization.Encoding.PEM, 
                                                 format=serialization.PrivateFormat.TraditionalOpenSSL, 
                                                 encryption_algorithm=serialization.NoEncryption()))
@@ -63,11 +61,3 @@ class CA:
 
     #crear el certificado firmado por la CA
     self._create_certificate(csr.subject)
-
-    with open(os.path.join(ROOT_CERT_DIR, "ca_cert.pem"), "rb") as f:
-      certificate = x509.load_pem_x509_certificate(f.read())
-
-    return {
-      'message': 'Succesful operation',
-      'certificate': str(certificate)
-    }
