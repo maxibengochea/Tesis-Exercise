@@ -6,15 +6,25 @@ import os
 
 class Client:
   def __init__(self, country='CU', state='La Habana', locality='Playa', organization_name='Humantoilet', common_name='humantoilet1'):
+    self._common_name = common_name
     self._private_key = self._create_private_key()
     self._country = country
     self._state = state
     self._locality = locality
     self._organization_name = organization_name
-    self._common_name = common_name
 
   def _create_private_key(self):
-    return rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+
+    #guardar la clave privada
+    os.makedirs(self._common_name, exist_ok=True)
+
+    with open(os.path.join(self._common_name, "private_key.pem"), "wb") as f:
+        f.write(key.private_bytes(encoding=serialization.Encoding.PEM, 
+                                                format=serialization.PrivateFormat.TraditionalOpenSSL, 
+                                                encryption_algorithm=serialization.NoEncryption()))
+        
+    return key
   
   #emitir un csr
   def issue_csr(self):
@@ -28,10 +38,9 @@ class Client:
   
     #guardar la clave privada y el CSR
     csr_path = os.path.join(f"{self._common_name}", "csr.pem")
-    os.makedirs(csr_path, exist_ok=True)
 
     with open(csr_path, "wb") as f:
       f.write(csr.public_bytes(serialization.Encoding.PEM))
 
-    print(f"CSR generado para {self._common_name}")
+    print(f"CSR generated for {self._common_name}")
     return csr_path

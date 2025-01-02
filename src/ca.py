@@ -17,7 +17,15 @@ class CA:
     self._create_certificate(self._identity, root=True) #crear certificado autofirmado
 
   def _create_private_key(self):
-    return rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+
+    #guardar la clave privada
+    with open(os.path.join(CA_ROOT, "private_key.pem"), "wb") as f:
+        f.write(key.private_bytes(encoding=serialization.Encoding.PEM, 
+                                                format=serialization.PrivateFormat.TraditionalOpenSSL, 
+                                                encryption_algorithm=serialization.NoEncryption()))
+        
+    return key
   
   def _create_identity(self):
     return x509.Name([
@@ -41,12 +49,6 @@ class CA:
     certificate = certificate.not_valid_after(datetime.now(timezone.utc) + timedelta(days=3650))
     certificate = certificate.add_extension(x509.BasicConstraints(ca=True, path_length=None), critical=True)
     certificate = certificate.sign(self._private_key, hashes.SHA256())
-
-    #guardar la clave privada
-    with open(os.path.join(CA_ROOT, "key.pem"), "wb") as f:
-        f.write(self._private_key.private_bytes(encoding=serialization.Encoding.PEM, 
-                                                format=serialization.PrivateFormat.TraditionalOpenSSL, 
-                                                encryption_algorithm=serialization.NoEncryption()))
 
     #guardar el certificado
     with open(os.path.join(cert_dir), "wb") as f:
