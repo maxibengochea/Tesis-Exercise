@@ -4,12 +4,8 @@ from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import serialization, hashes
 import os
 
-#crear el directorio para guardar el csr del cliente
-CSRS_DIR = "src/assets/csrs"
-os.makedirs(CSRS_DIR, exist_ok=True)
-
 class Client:
-  def __init__(self, country: str, state: str, locality: str, organization_name: str, common_name: str):
+  def __init__(self, country='CU', state='La Habana', locality='Playa', organization_name='Humantoilet', common_name='humantoilet1'):
     self._private_key = self._create_private_key()
     self._country = country
     self._state = state
@@ -30,8 +26,9 @@ class Client:
         x509.NameAttribute(NameOID.COMMON_NAME, self._common_name),
     ])).sign(self._private_key, hashes.SHA256())
   
-    #guardar la clave privada y el CSR en disco
-    csr_path = os.path.join(CSRS_DIR, f"{self._common_name}_csr.pem")
+    #guardar la clave privada y el CSR
+    csr_path = os.path.join(f"{self._common_name}", "csr.pem")
+    os.makedirs(csr_path, exist_ok=True)
 
     with open(csr_path, "wb") as f:
       f.write(csr.public_bytes(serialization.Encoding.PEM))
