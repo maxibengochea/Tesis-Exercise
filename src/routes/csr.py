@@ -10,9 +10,9 @@ def issue_csr():
   fields = ['country', 'state', 'locality', 'organization_name', 'common_name']
 
   #capturar el body
-  data = request.get_json()
-  body = data if type(data) == dict else {}
-  new_body = {key: value for key, value in body if key in fields}
+  data = request.get_json(silent=True)
+  body = data if data else {}
+  new_body = {key: value for key, value in body.items() if key in fields}
 
   #validaciones
   validations = [CSRValidator.country(new_body), CSRValidator.locality(new_body), CSRValidator.state(new_body), 
@@ -24,10 +24,5 @@ def issue_csr():
 
   client = Client(**new_body)
   csr = client.issue_csr()
-  return ca.issue_certificate(csr)
-
-
-  
-
-
-
+  ca.issue_certificate(csr)
+  return jsonify({ 'message': 'CSR emited succesfully and certificate recived' })
