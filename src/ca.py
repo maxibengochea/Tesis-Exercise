@@ -40,6 +40,7 @@ class CA:
     #ruta del certificado
     cert_dir = os.path.join(CA_ROOT, "root_cert.pem") if root else os.path.join(f"{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}", "cert.pem") 
 
+    #crear el certifcado
     certificate = x509.CertificateBuilder()
     certificate = certificate.subject_name(subject)
     certificate = certificate.issuer_name(self._identity)
@@ -50,11 +51,21 @@ class CA:
     certificate = certificate.add_extension(x509.BasicConstraints(ca=True, path_length=None), critical=True)
     certificate = certificate.sign(self._private_key, hashes.SHA256())
 
+    #validar que el cetificado no exista
+    with open('src/db.txt', 'r') as f:
+      if f'{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value} - {subject.get_attributes_for_oid(NameOID.ORGANIZATION_NAME)[0].value}' in f.readlines():
+        return False
+    
+    #agregar la solicitud a la db
+    with open('src/db.txt', 'a') as f:
+      f.write(f'{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value} - {subject.get_attributes_for_oid(NameOID.ORGANIZATION_NAME)[0].value}\n')
+
     #guardar el certificado
     with open(os.path.join(cert_dir), "wb") as f:
-        f.write(certificate.public_bytes(serialization.Encoding.PEM))
+      f.write(certificate.public_bytes(serialization.Encoding.PEM))
 
     print(f"Certificate emited to {subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}")
+    return True
 
   def issue_certificate(self, csr_path: str):
     #cargar el CSR del cliente
@@ -62,4 +73,4 @@ class CA:
       csr = x509.load_pem_x509_csr(f.read())
 
     #crear el certificado firmado por la CA
-    self._create_certificate(csr.subject)
+    return self._create_certificate(csr.subject)
