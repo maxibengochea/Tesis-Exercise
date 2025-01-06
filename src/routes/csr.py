@@ -7,16 +7,15 @@ from src.client import Client
 @csr.route('/issue_csr', methods=['GET'])
 def issue_csr():
   #campos de la clase 'Client'
-  fields = ['country', 'state', 'locality', 'organization_name', 'common_name']
+  fields = ['organization_name', 'common_name']
 
   #capturar el body
   data = request.get_json(silent=True)
   body = data if data else {}
-  new_body = {key: value for key, value in body.items() if key in fields}
+  new_body = {key: value for key, value in body.items() if key in fields and body['key'] != ''}
 
   #validaciones
-  validations = [CSRValidator.country(new_body), CSRValidator.locality(new_body), CSRValidator.state(new_body), 
-                 CSRValidator.organization_name(body), CSRValidator.common_name(new_body)]
+  validations = [CSRValidator.validate(new_body, 'organization_name'), CSRValidator.validate(new_body, 'common_name')]
   
   for validation in validations:
     if not validation['valid']:
@@ -24,5 +23,14 @@ def issue_csr():
 
   client = Client(**new_body)
   csr = client.issue_csr()
-  ca.issue_certificate(csr)
-  return jsonify({ 'message': 'CSR emited succesfully and certificate recived' })
+  
+  if not ca.issue_certificate(csr):
+    return jsonify({ 
+      'valid': False,
+      'message': 'CSR already emited' 
+    })
+  
+  return jsonify({
+    'valid': True,
+    'message': 'CSR emited succesfully and certificate recived' 
+  })
