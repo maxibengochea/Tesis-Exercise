@@ -1,6 +1,6 @@
 class CSRValidator:
   @classmethod
-  def _valid(cls, body: dict, field: str):
+  def _is_not_empty(cls, body: dict, field: str):
     valid = True
     message = 'Successful operation'
 
@@ -12,36 +12,16 @@ class CSRValidator:
       'valid': valid,
       'message': message
     }
-
-  @classmethod
-  def country(cls, body: dict):
-    valid = True
-    message = 'Successful operation'
-    validation = CSRValidator._valid(body, 'username')
-
-    if not validation['valid']:
-      return validation
-
-    if 'country' in body.keys():
-      country = body['country']
-
-      if country != 'CU':
-        valid = False
-        message = 'Invalid country code'
-    
-    return {
-      'valid': valid,
-      'message': message
-    }
   
   @classmethod
-  def state(cls, body: dict):
+  def _exists(cls, body: dict, field):
     valid = True
     message = 'Successful operation'
-    validation = CSRValidator._valid(body, 'state')
 
-    if not validation['valid']:
-      return validation
+    if field in body.keys():
+      valid = False
+      message = f"'{field}' field is required"
+
     
     return {
       'valid': valid,
@@ -49,41 +29,17 @@ class CSRValidator:
     }
 
   @classmethod
-  def organization_name(cls, body: dict):
+  def validate(cls, body: dict, field):
     valid = True
     message = 'Successful operation'
-    validation = CSRValidator._valid(body, 'organization_name')
+    validation_empty = CSRValidator._is_not_empty(body, field)
+    validation_exists = CSRValidator._exists(body, field)
 
-    if not validation['valid']:
-      return validation
+    if not validation_empty['valid']:
+      return validation_empty
     
-    return {
-      'valid': valid,
-      'message': message
-    }
-  
-  @classmethod
-  def locality(cls, body: dict):
-    valid = True
-    message = 'Successful operation'
-    validation = CSRValidator._valid(body, 'locality')
-
-    if not validation['valid']:
-      return validation
-    
-    return {
-      'valid': valid,
-      'message': message
-    }
-  
-  @classmethod
-  def common_name(cls, body: dict):
-    valid = True
-    message = 'Successful operation'
-    validation = CSRValidator._valid(body, 'common_name')
-
-    if not validation['valid']:
-      return validation
+    if not validation_exists['valid']:
+      return validation_exists
     
     return {
       'valid': valid,
