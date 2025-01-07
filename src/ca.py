@@ -53,12 +53,12 @@ class CA:
 
     #validar que el cetificado no exista
     with open('src/db.txt', 'r') as f:
-      if f'{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value} - {subject.get_attributes_for_oid(NameOID.ORGANIZATION_NAME)[0].value}' in f.readlines():
+      if f'{subject.get_attributes_for_oid(NameOID.ORGANIZATION_NAME)[0].value} - {subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}\n' in f.readlines():
         return False
     
     #agregar la solicitud a la db
     with open('src/db.txt', 'a') as f:
-      f.write(f'{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value} - {subject.get_attributes_for_oid(NameOID.ORGANIZATION_NAME)[0].value}\n')
+      f.write(f'{subject.get_attributes_for_oid(NameOID.ORGANIZATION_NAME)[0].value} - {subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}\n')
 
     #guardar el certificado
     with open(os.path.join(cert_dir), "wb") as f:
