@@ -5,7 +5,7 @@ from cryptography.hazmat.primitives import serialization, hashes
 import os
 
 class Client:
-  def __init__(self, country='CU', state='La Habana', locality='Playa', organization_name='Humantoilet', common_name='humantoilet1'):
+  def __init__(self, organization_name='', common_name='', country='CU', state='La Habana', locality='Playa', ):
     self._common_name = common_name
     self._private_key = self._create_private_key()
     self._country = country
