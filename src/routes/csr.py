@@ -12,7 +12,7 @@ def issue_csr():
   #capturar el body
   data = request.get_json(silent=True)
   body = data if data else {}
-  new_body = {key: value for key, value in body.items() if key in fields and body['key'] != ''}
+  new_body = {key: value for key, value in body.items() if key in fields}
 
   #validaciones
   validations = [CSRValidator.validate(new_body, 'organization_name'), CSRValidator.validate(new_body, 'common_name')]
