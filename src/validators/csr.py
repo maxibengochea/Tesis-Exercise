@@ -4,7 +4,7 @@ class CSRValidator:
     valid = True
     message = 'Successful operation'
 
-    if field in body.keys() and body[field].strip() == '':
+    if body[field].strip() == '':
       valid = False
       message = f"'{field}' field cannot be empty"
 
@@ -18,11 +18,10 @@ class CSRValidator:
     valid = True
     message = 'Successful operation'
 
-    if field in body.keys():
+    if not field in body.keys():
       valid = False
       message = f"'{field}' field is required"
 
-    
     return {
       'valid': valid,
       'message': message
@@ -32,14 +31,17 @@ class CSRValidator:
   def validate(cls, body: dict, field):
     valid = True
     message = 'Successful operation'
-    validation_empty = CSRValidator._is_not_empty(body, field)
+    
+    #validaciones
     validation_exists = CSRValidator._exists(body, field)
+
+    if not validation_exists['valid']:
+      return validation_exists
+    
+    validation_empty = CSRValidator._is_not_empty(body, field)
 
     if not validation_empty['valid']:
       return validation_empty
-    
-    if not validation_exists['valid']:
-      return validation_exists
     
     return {
       'valid': valid,
