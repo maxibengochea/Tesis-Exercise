@@ -1,12 +1,14 @@
 import ReactConfetti from "react-confetti"
 import { useNavigate } from "react-router-dom"
 import { useWindowSize } from "react-use"
+import { useIssueStore } from "../store/useIssueStore"
 
 export function SuccesfulIssue() {
   const navigate = useNavigate()
   const { width, height } = useWindowSize()
+  const successfulIssue = useIssueStore(state => state.successfulIssue)
 
-  return (
+  return successfulIssue && (
     <main className="[background:linear-gradient(#1e293b,white)] h-[100vh] flex items-center justify-center">
       <ReactConfetti
         width={width}

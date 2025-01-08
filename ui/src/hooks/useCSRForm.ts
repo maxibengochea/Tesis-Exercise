@@ -2,9 +2,11 @@ import { useState } from "react"
 import { CSRType } from "../types/CSR"
 import { getCert } from "../services/getCert"
 import { useNavigate } from "react-router-dom"
+import { useIssueStore } from "../store/useIssueStore"
 
 export function useCSRForm() {
   const navigate = useNavigate()
+  const updateSuccessfulIssue = useIssueStore(state => state.updateSuccessfulIssue)
 
   const [csrInfo, setcsrInfo] = useState<CSRType>({
     common_name: '',
@@ -25,7 +27,7 @@ export function useCSRForm() {
     if (!valid) 
       return alert(message)
   
-    console.log(message)
+    updateSuccessfulIssue(true)
     navigate('successful_issue')
   }
 
