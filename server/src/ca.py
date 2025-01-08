@@ -6,7 +6,8 @@ from cryptography.hazmat.primitives import serialization, hashes
 import os
 
 # Directorios para guardar los certificados y claves
-CA_ROOT = 'server/CA'
+CA_ROOT = f'{os.getcwd()}/server/CA'
+DB_ROOT =  f'{os.getcwd()}/server/src/db.txt'
 os.makedirs(CA_ROOT, exist_ok=True)
 
 class CA:
@@ -38,7 +39,7 @@ class CA:
   
   def _create_certificate(self, subject: x509.Name, root=False):
     #ruta del certificado
-    cert_dir = os.path.join(CA_ROOT, "root_cert.pem") if root else os.path.join(f"server/{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}", "cert.pem") 
+    cert_dir = os.path.join(CA_ROOT, "root_cert.pem") if root else os.path.join(f"{os.getcwd()}/server/{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}", "cert.pem") 
 
     #crear el certifcado
     certificate = x509.CertificateBuilder()
@@ -52,16 +53,16 @@ class CA:
     certificate = certificate.sign(self._private_key, hashes.SHA256())
 
     #validar que el cetificado no exista
-    with open('server/src/db.txt', 'r') as f:
+    with open(DB_ROOT, 'r') as f:
       if f'{subject.get_attributes_for_oid(NameOID.ORGANIZATION_NAME)[0].value} - {subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}\n' in f.readlines():
         return False
     
     #agregar la solicitud a la db
-    with open('server/src/db.txt', 'a') as f:
+    with open(DB_ROOT, 'a') as f:
       f.write(f'{subject.get_attributes_for_oid(NameOID.ORGANIZATION_NAME)[0].value} - {subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}\n')
 
     #guardar el certificado
-    with open(os.path.join(cert_dir), "wb") as f:
+    with open(cert_dir, "wb") as f:
       f.write(certificate.public_bytes(serialization.Encoding.PEM))
 
     print(f"Certificate emited to {subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}")
