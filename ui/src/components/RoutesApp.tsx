@@ -1,6 +1,6 @@
-import { Route, Routes } from "react-router-dom";
-import { Home } from "../pages/Home";
-import { SuccesfulIssue } from "../pages/SuccesfulIssue";
+import { Route, Routes } from "react-router-dom"
+import { Home } from "../pages/Home"
+import { SuccesfulIssue } from "../pages/SuccesfulIssue"
 
 export function RoutesApp() {
   return (
@@ -10,7 +10,7 @@ export function RoutesApp() {
         element={<Home/>}
       />
       <Route 
-        path='/succesful_issue'
+        path="successful_issue"
         element={<SuccesfulIssue/>}
       />
     </Routes>
