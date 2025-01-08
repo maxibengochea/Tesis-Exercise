@@ -1,6 +1,6 @@
 import { CSRType } from "../types/CSR"
 
-const API_URL = 'https://localhost:5000/isuue_certificate'
+const API_URL = 'http://localhost:5000/issue_csr'
 
 interface DataResponse {
   valid: boolean,
@@ -14,7 +14,8 @@ export const getCert = async ({ common_name, organization_name }: CSRType) : Pro
   })
 
   const request = new Request(API_URL, {
-    method: 'GET',
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: bodyRequest
   })
 
