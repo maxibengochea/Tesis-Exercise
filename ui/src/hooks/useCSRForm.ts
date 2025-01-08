@@ -3,7 +3,7 @@ import { CSRType } from "../types/CSR"
 import { getCert } from "../services/getCert"
 import { useNavigate } from "react-router-dom"
 
-export function useCSRInfo() {
+export function useCSRForm() {
   const navigate = useNavigate()
 
   const [csrInfo, setcsrInfo] = useState<CSRType>({
@@ -20,7 +20,6 @@ export function useCSRInfo() {
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(csrInfo)
     const {valid, message} = await getCert(csrInfo)
   
     if (!valid) 
@@ -32,6 +31,7 @@ export function useCSRInfo() {
 
   return {
     handleChange,
-    handleSubmit
+    handleSubmit,
+    csrInfo
   }
 }
