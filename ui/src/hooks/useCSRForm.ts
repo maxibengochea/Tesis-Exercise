@@ -22,13 +22,23 @@ export function useCSRForm() {
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const {valid, message} = await getCert(csrInfo)
+    const csr = cleanCSR(csrInfo)
+    const {valid, message} = await getCert(csr)
   
     if (!valid) 
       return alert(message)
   
     updateSuccessfulIssue(true)
     navigate('successful_issue')
+  }
+
+  const cleanCSR = (csr: CSRType): CSRType => {
+    const {  common_name, organization_name } = csr
+
+    return {
+      common_name: common_name.trim(),
+      organization_name: organization_name.trim()
+    }
   }
 
   return {
