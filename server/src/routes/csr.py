@@ -4,7 +4,7 @@ from flask import request, jsonify
 from src.validators.csr import CSRValidator
 from src.client import Client
 
-@csr.route('/issue_csr', methods=['GET'])
+@csr.route('/issue_csr', methods=['POST'])
 def issue_csr():
   #campos de la clase 'Client'
   fields = ['organization_name', 'common_name']
