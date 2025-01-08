@@ -4,6 +4,8 @@ import { getCert } from "../services/getCert"
 import { useNavigate } from "react-router-dom"
 
 export function useCSRInfo() {
+  const navigate = useNavigate()
+
   const [csrInfo, setcsrInfo] = useState<CSRType>({
     common_name: '',
     organization_name: ''
@@ -18,14 +20,14 @@ export function useCSRInfo() {
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    console.log(csrInfo)
     const {valid, message} = await getCert(csrInfo)
-    const navigate = useNavigate()
   
     if (!valid) 
       return alert(message)
   
     console.log(message)
-    navigate('/successful_issue')
+    navigate('successful_issue')
   }
 
   return {
