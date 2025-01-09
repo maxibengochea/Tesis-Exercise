@@ -1,9 +1,9 @@
-from src.routes import ca
+from src.services.ca import ca
 from flask import request, jsonify
 from src.validators.csr import CSRValidator
-from src.client import Client
+from src.services.client import Client
 from flask import Blueprint
-from src.quorum import Quorum
+from src.services.network import Network
 
 csr = Blueprint('csr', __name__)
 
@@ -26,7 +26,8 @@ def issue_csr():
 
   client = Client(**new_body)
   csr = client.issue_csr()
-  Quorum.config_start_node(new_body['common_name'])
+  Network.config_start_node(new_body['common_name'])
+  Network.config_docker_compose()
   
   if not ca.issue_certificate(csr):
     return jsonify({ 
