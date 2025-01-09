@@ -26,14 +26,16 @@ def issue_csr():
 
   client = Client(**new_body)
   csr = client.issue_csr()
-  Network.config_start_node(new_body['common_name'])
-  Network.config_docker_compose()
   
   if not ca.issue_certificate(csr):
     return jsonify({ 
       'valid': False,
       'message': 'CSR already emited' 
     })
+  
+  Network.config_start_node(client.hex_public_key)
+  Network.config_docker_compose()
+  Network.config_enode()
   
   return jsonify({
     'valid': True,
