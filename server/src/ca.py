@@ -6,7 +6,7 @@ from cryptography.hazmat.primitives import serialization, hashes
 import os
 
 # Directorios para guardar los certificados y claves
-CA_ROOT = f'{os.getcwd()}/server/CA'
+CA_ROOT = f'{os.getcwd()}/server/entitys/CA'
 DB_ROOT =  f'{os.getcwd()}/server/src/db.txt'
 os.makedirs(CA_ROOT, exist_ok=True)
 
@@ -39,7 +39,7 @@ class CA:
   
   def _create_certificate(self, subject: x509.Name, root=False):
     #ruta del certificado
-    cert_dir = os.path.join(CA_ROOT, "root_cert.pem") if root else os.path.join(f"{os.getcwd()}/server/{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}", "cert.pem") 
+    cert_dir = os.path.join(CA_ROOT, "root_cert.pem") if root else os.path.join(f"{os.getcwd()}/server/entitys/{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}", "cert.pem") 
 
     #crear el certifcado
     certificate = x509.CertificateBuilder()
