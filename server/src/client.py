@@ -17,9 +17,9 @@ class Client:
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
 
     #guardar la clave privada
-    os.makedirs(f'{os.getcwd()}/server/entitys/{self._common_name}', exist_ok=True)
+    os.makedirs(f'entitys/{self._common_name}', exist_ok=True)
 
-    with open(os.path.join(f'{os.getcwd()}/server/entitys/{self._common_name}', "private_key.pem"), "wb") as f:
+    with open(os.path.join(f'entitys/{self._common_name}', "private_key.pem"), "wb") as f:
         f.write(key.private_bytes(encoding=serialization.Encoding.PEM, 
                                                 format=serialization.PrivateFormat.TraditionalOpenSSL, 
                                                 encryption_algorithm=serialization.NoEncryption()))
@@ -37,7 +37,7 @@ class Client:
     ])).sign(self._private_key, hashes.SHA256())
   
     #guardar la clave privada y el CSR
-    csr_path = os.path.join(f"{os.getcwd()}/server/entitys/{self._common_name}", "csr.pem")
+    csr_path = os.path.join(f"entitys/{self._common_name}", "csr.pem")
 
     with open(csr_path, "wb") as f:
       f.write(csr.public_bytes(serialization.Encoding.PEM))
