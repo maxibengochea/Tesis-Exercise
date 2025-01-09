@@ -14,4 +14,5 @@
 - docker run --rm -v $(pwd)/node2:/data quorumengineering/quorum init /genesis.json
 - docker run --rm -v $(pwd)/node3:/data quorumengineering/quorum init /genesis.json
 
-
+## Levantar la red
+- docker compose up -d
