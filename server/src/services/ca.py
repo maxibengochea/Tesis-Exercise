@@ -3,6 +3,7 @@ from cryptography import x509
 from cryptography.x509.oid import NameOID
 from datetime import datetime, timedelta, timezone
 from cryptography.hazmat.primitives import serialization, hashes
+from src.services.network import Network
 import os
 
 # Directorios para guardar los certificados y claves
@@ -39,7 +40,7 @@ class CA:
   
   def _create_certificate(self, subject: x509.Name, root=False):
     #ruta del certificado
-    cert_dir = os.path.join(CA_ROOT, "root_cert.pem") if root else os.path.join(f"quorum-network/{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}", "cert.pem") 
+    cert_dir = os.path.join(CA_ROOT, "root_cert.pem") if root else os.path.join(f"quorum-network/node{Network.client_number}", "cert.pem") 
 
     #crear el certifcado
     certificate = x509.CertificateBuilder()

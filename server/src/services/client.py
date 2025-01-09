@@ -2,6 +2,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography import x509
 from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import serialization, hashes
+from src.services.network import Network
 import os
 
 class Client:
@@ -18,12 +19,12 @@ class Client:
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
 
     #guardar la clave privada
-    os.makedirs(f'quorum-network/{self._common_name}', exist_ok=True)
+    os.makedirs(f'quorum-network/node{Network.client_number}', exist_ok=True)
 
-    with open(os.path.join(f'quorum-network/{self._common_name}', "private_key.pem"), "wb") as f:
+    with open(os.path.join(f'quorum-network/node{Network.client_number}', "private_key.pem"), "wb") as f:
         f.write(key.private_bytes(encoding=serialization.Encoding.PEM, 
-                                                format=serialization.PrivateFormat.TraditionalOpenSSL, 
-                                                encryption_algorithm=serialization.NoEncryption()))
+                                  format=serialization.PrivateFormat.TraditionalOpenSSL, 
+                                  encryption_algorithm=serialization.NoEncryption()))
         
     return key
   
