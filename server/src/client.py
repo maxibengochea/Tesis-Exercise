@@ -42,5 +42,5 @@ class Client:
     with open(csr_path, "wb") as f:
       f.write(csr.public_bytes(serialization.Encoding.PEM))
 
-    print(f"CSR generated for {self._common_name}")
+    print(f"CSR emited by {self._common_name}")
     return csr_path

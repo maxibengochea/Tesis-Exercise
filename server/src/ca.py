@@ -34,7 +34,7 @@ class CA:
       x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, "La Habana"),
       x509.NameAttribute(NameOID.LOCALITY_NAME, "Playa"),
       x509.NameAttribute(NameOID.ORGANIZATION_NAME, "HumanToilet CA"),
-      x509.NameAttribute(NameOID.COMMON_NAME, "humantoilet-ca.com"),
+      x509.NameAttribute(NameOID.COMMON_NAME, "humantoilet-ca"),
     ])
   
   def _create_certificate(self, subject: x509.Name, root=False):
