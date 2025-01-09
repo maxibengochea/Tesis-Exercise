@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from flask import Flask
-from src.blueprints.csr import csr
+from src.routes.csr import csr
 from flask_cors import CORS
 import os
 

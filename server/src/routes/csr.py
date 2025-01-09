@@ -1,8 +1,10 @@
-from src.blueprints import ca
-from src.blueprints.csr import csr
+from src.routes import ca
 from flask import request, jsonify
 from src.validators.csr import CSRValidator
 from src.client import Client
+from flask import Blueprint
+
+csr = Blueprint('csr', __name__)
 
 @csr.route('/issue_csr', methods=['POST'])
 def issue_csr():
