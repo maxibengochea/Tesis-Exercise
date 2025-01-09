@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-interface State{
+interface State {
   successfulIssue: boolean,
   updateSuccessfulIssue(action: boolean): void
 }
