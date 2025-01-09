@@ -84,3 +84,5 @@ class CA:
 
     #crear el certificado firmado por la CA
     return self._create_certificate(csr.subject)
+
+ca = CA()
