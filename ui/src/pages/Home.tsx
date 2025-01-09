@@ -5,7 +5,8 @@ interface FieldFormProps {
   children: string,
   id: string, 
   name: string,
-  onChange(e: React.ChangeEvent<HTMLInputElement>): void
+  onChange(e: React.ChangeEvent<HTMLInputElement>): void,
+  placeholder?: string
 }
 
 export function Home() {
@@ -32,6 +33,7 @@ export function Home() {
               id={commonNameId}
               name="common_name"
               onChange={handleChange}
+              placeholder="example: node1..."
             >
               common name:
             </FieldForm>
@@ -43,7 +45,7 @@ export function Home() {
   )
 }
 
-const FieldForm = ({ id, name, onChange, children }: FieldFormProps) => {
+const FieldForm = ({ id, name, onChange, children, placeholder }: FieldFormProps) => {
   return (
     <div className="w-full flex flex-col justify-center items-start gap-2">
       <label
@@ -58,6 +60,7 @@ const FieldForm = ({ id, name, onChange, children }: FieldFormProps) => {
         type='text'
         onChange={onChange}
         name={name}
+        placeholder={placeholder ?? ''}
       />
     </div>
   )
