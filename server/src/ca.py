@@ -6,7 +6,7 @@ from cryptography.hazmat.primitives import serialization, hashes
 import os
 
 # Directorios para guardar los certificados y claves
-CA_ROOT = 'entitys/CA'
+CA_ROOT = 'CA'
 DB_ROOT =  f'{os.getcwd()}/server/src/db.txt'
 os.makedirs(CA_ROOT, exist_ok=True)
 
@@ -15,7 +15,7 @@ class CA:
     self._private_key = self._create_private_key()
     self._public_key = self._private_key.public_key()
     self._identity = self._create_identity()
-    self._create_certificate(self._identity, root=True) #crear certificado autofirmado
+    self._root_cert = self._create_certificate(self._identity, root=True) #crear certificado autofirmado
 
   def _create_private_key(self):
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
@@ -33,13 +33,13 @@ class CA:
       x509.NameAttribute(NameOID.COUNTRY_NAME, "CU"),
       x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, "La Habana"),
       x509.NameAttribute(NameOID.LOCALITY_NAME, "Playa"),
-      x509.NameAttribute(NameOID.ORGANIZATION_NAME, "HumanToilet CA"),
+      x509.NameAttribute(NameOID.ORGANIZATION_NAME, "Sex Company"),
       x509.NameAttribute(NameOID.COMMON_NAME, "humantoilet-ca"),
     ])
   
   def _create_certificate(self, subject: x509.Name, root=False):
     #ruta del certificado
-    cert_dir = os.path.join(CA_ROOT, "root_cert.pem") if root else os.path.join(f"entitys/{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}", "cert.pem") 
+    cert_dir = os.path.join(CA_ROOT, "root_cert.pem") if root else os.path.join(f"quorum-network/{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}", "cert.pem") 
 
     #crear el certifcado
     certificate = x509.CertificateBuilder()
@@ -65,8 +65,17 @@ class CA:
     with open(cert_dir, "wb") as f:
       f.write(certificate.public_bytes(serialization.Encoding.PEM))
 
+    if not root:
+      #si no es el certificado raiz guardarlo tambien en la CA
+      with open(f'{CA_ROOT}/{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}_cert.pem', "wb") as f:
+        f.write(certificate.public_bytes(serialization.Encoding.PEM))
+    
+      #si no es el certificado raiz entonces guardar tambien el certificado raiz
+      with open(cert_dir.replace('cert.pem', 'root_cert.pem'), "wb") as f:
+        f.write(self._root_cert.public_bytes(serialization.Encoding.PEM))
+        
     print(f"Certificate emited to {subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}")
-    return True
+    return True if not root else certificate
 
   def issue_certificate(self, csr_path: str):
     #cargar el CSR del cliente
