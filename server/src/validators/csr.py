@@ -1,3 +1,5 @@
+import re
+
 class CSRValidator:
   @classmethod
   def _is_not_empty(cls, body: dict, field: str):
@@ -28,7 +30,7 @@ class CSRValidator:
     }
 
   @classmethod
-  def validate(cls, body: dict, field):
+  def validate(cls, body: dict, field: str):
     valid = True
     message = 'Successful operation'
     
@@ -42,6 +44,10 @@ class CSRValidator:
 
     if not validation_empty['valid']:
       return validation_empty
+    
+    if field == 'common_name' and not re.match(r'noded+', body[field]):
+      valid = False
+      message = 'common_name field must match the following format: "node[N]" where "N" is any number'
     
     return {
       'valid': valid,
