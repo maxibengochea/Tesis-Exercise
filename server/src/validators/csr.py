@@ -45,7 +45,7 @@ class CSRValidator:
     if not validation_empty['valid']:
       return validation_empty
     
-    if field == 'common_name' and not re.match(r'noded+', body[field]):
+    if field == 'common_name' and not re.match(r'node\d+', body[field]):
       valid = False
       message = 'common_name field must match the following format: "node[N]" where "N" is any number'
     
