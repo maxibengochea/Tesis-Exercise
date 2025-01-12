@@ -9,10 +9,13 @@
 - chmod +x start.sh
 - start.sh
 
-## Inicializar cada node de la blockchain (ejemplo con 3 nodos)
-- docker run --rm -v $(pwd)/node1:/data quorumengineering/quorum init /genesis.json
-- docker run --rm -v $(pwd)/node2:/data quorumengineering/quorum init /genesis.json
-- docker run --rm -v $(pwd)/node3:/data quorumengineering/quorum init /genesis.json
+## Movernos al directorio de quorum-network para trabajar con la blockchain a través de docker
+- cd quorum-network
+
+## Inicializar cada node de la blockchain con el archivo genesis.json (ejemplo con 3 nodos)
+- docker run --rm -v $(pwd)/node1:/data quorumengineering/quorum init /data/genesis.json
+- docker run --rm -v $(pwd)/node2:/data quorumengineering/quorum init /data/genesis.json
+- docker run --rm -v $(pwd)/node3:/data quorumengineering/quorum init /data/genesis.json
 
 ## Levantar la red
 - docker compose up -d
