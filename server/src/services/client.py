@@ -31,11 +31,11 @@ class Client:
   #emitir un csr
   def issue_csr(self):
     csr = x509.CertificateSigningRequestBuilder().subject_name(x509.Name([
-        x509.NameAttribute(NameOID.COUNTRY_NAME, self._country),
-        x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, self._state),
-        x509.NameAttribute(NameOID.LOCALITY_NAME, self._locality),
-        x509.NameAttribute(NameOID.ORGANIZATION_NAME, self._organization_name),
-        x509.NameAttribute(NameOID.COMMON_NAME, self._common_name),
+      x509.NameAttribute(NameOID.COUNTRY_NAME, self._country),
+      x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, self._state),
+      x509.NameAttribute(NameOID.LOCALITY_NAME, self._locality),
+      x509.NameAttribute(NameOID.ORGANIZATION_NAME, self._organization_name),
+      x509.NameAttribute(NameOID.COMMON_NAME, self._common_name),
     ])).sign(self._private_key, hashes.SHA256())
   
     #guardar la clave privada y el CSR
