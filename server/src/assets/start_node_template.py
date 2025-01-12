@@ -5,10 +5,11 @@ START = '''
     --raftport 5040{0} \
     --rpc \
     --rpcaddr "0.0.0.0" \
-    --rpcport 2200{0} \
+    --rpcport 2200{1} \
     --rpcapi "admin,eth,debug,miner,net,txpool,personal,web3" \
-    --port 2100{0} \
+    --port 2100{1} \
     --nodiscover \
-    --tlskeyfile "/tls/private_key.pem" \
-    --tlscertfile "/tls/cert.pem" \
-    --tlsca "/tls/root_cert.pem"'''
+    --tls \
+    --tls.cacert "/tls/root_cert.pem" \
+    --tls.cert "/tls/cert.pem" \
+    --tls.key "/tls/private_key.pem"'''
