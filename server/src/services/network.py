@@ -1,5 +1,6 @@
 from src.assets.start_node_template import START
 from src.assets.docker_compose_node_template import DOCKER_COMPOSE_NODE
+from src.assets.genesis_template import GENESIS
 
 class Network:
   _public_keys: list[str] = []
@@ -7,17 +8,22 @@ class Network:
 
   @classmethod
   def config_start_node(cls, public_key: str):
-    #agreagr la llave publica de cada node
+    #agreagar la llave publica de cada node
     cls._public_keys.append(public_key)
 
     #obtener node_name del nodo y el node number
     node_name = f'node{cls.client_number}'
     node_number = int(node_name[4:])
 
-    #config start.sh
+    #configurar start.sh
     with open(f'quorum-network/{node_name}/start.sh', 'w') as f:
-      f.write(START.format(node_number))
-      cls.client_number += 1
+      f.write(START.format(node_number, node_number - 1))
+      
+    #configurar genesis.json
+    with open(f'quorum-network/{node_name}/genesis.json', 'w') as f:
+      f.write(GENESIS)
+      
+    cls.client_number += 1
 
   @classmethod
   def config_docker_compose(cls):
