@@ -1,0 +1,1 @@
+START_NETWORK =  """npx quorum-genesis-tool --consensus qbft --chainID 1337 --blockperiod 5 --requestTimeout 10 --epochLength 30000 --difficulty 1 --gasLimit '0xFFFFFF' --coinbase '0x0000000000000000000000000000000000000000' --validators {0} --members 0 --bootnodes 0 --outputPath 'artifacts'"""
