@@ -35,7 +35,7 @@ def issue_csr():
   
   Network.config_start_node(client.hex_public_key)
   Network.config_docker_compose()
-  Network.config_enode()
+  Network.config_start_network()
   
   return jsonify({
     'valid': True,
