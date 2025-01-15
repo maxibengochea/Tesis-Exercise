@@ -33,7 +33,7 @@ def issue_csr():
       'message': 'CSR already emited' 
     })
   
-  Network.config_start_node(client.hex_public_key)
+  Network.config_start_node()
   Network.config_docker_compose()
   Network.config_start_network()
   
