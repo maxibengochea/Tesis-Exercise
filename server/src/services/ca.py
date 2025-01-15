@@ -40,7 +40,7 @@ class CA:
   
   def _create_certificate(self, subject: x509.Name, root=False):
     #ruta del certificado
-    cert_dir = os.path.join(CA_ROOT, "root_cert.pem") if root else os.path.join(f"quorum-network/node{Network.client_number}", "cert.pem") 
+    cert_dir = os.path.join(CA_ROOT, "root_cert.pem") if root else os.path.join(f"quorum-network/node{Network.client_number}/tls", "cert.pem") 
 
     #crear el certifcado
     certificate = x509.CertificateBuilder()
