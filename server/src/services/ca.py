@@ -24,8 +24,8 @@ class CA:
     #guardar la clave privada
     with open(os.path.join(CA_ROOT, "private_key.pem"), "wb") as f:
         f.write(key.private_bytes(encoding=serialization.Encoding.PEM, 
-                                                format=serialization.PrivateFormat.TraditionalOpenSSL, 
-                                                encryption_algorithm=serialization.NoEncryption()))
+                                  format=serialization.PrivateFormat.TraditionalOpenSSL, 
+                                  encryption_algorithm=serialization.NoEncryption()))
         
     return key
   
@@ -38,7 +38,7 @@ class CA:
       x509.NameAttribute(NameOID.COMMON_NAME, "humantoilet-ca"),
     ])
   
-  def _create_certificate(self, subject: x509.Name, root=False):
+  def _create_certificate(self, subject: x509.Name, client_key=None, root=False):
     #ruta del certificado
     cert_dir = os.path.join(CA_ROOT, "root_cert.pem") if root else os.path.join(f"quorum-network/node{Network.client_number}/tls", "cert.pem") 
 
@@ -53,20 +53,18 @@ class CA:
     certificate = certificate.add_extension(x509.BasicConstraints(ca=True, path_length=None), critical=True)
     certificate = certificate.sign(self._private_key, hashes.SHA256())
 
-    #validar que el cetificado no exista
-    with open(DB_ROOT, 'r') as f:
-      if f'{subject.get_attributes_for_oid(NameOID.ORGANIZATION_NAME)[0].value} - {subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}\n' in f.readlines():
-        return False
-    
-    #agregar la solicitud a la db
-    with open(DB_ROOT, 'a') as f:
-      f.write(f'{subject.get_attributes_for_oid(NameOID.ORGANIZATION_NAME)[0].value} - {subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}\n')
+    if root:
+      #guardar el certificado
+      with open(cert_dir, "wb") as f:
+        f.write(certificate.public_bytes(serialization.Encoding.PEM))
 
-    #guardar el certificado
-    with open(cert_dir, "wb") as f:
-      f.write(certificate.public_bytes(serialization.Encoding.PEM))
+    else:    
+      self._add_client(client_key)
 
-    if not root:
+      #guardar el certificado
+      with open(cert_dir, "wb") as f:
+        f.write(certificate.public_bytes(serialization.Encoding.PEM))
+
       #si no es el certificado raiz guardarlo tambien en la CA
       with open(f'{CA_ROOT}/{subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}_cert.pem', "wb") as f:
         f.write(certificate.public_bytes(serialization.Encoding.PEM))
@@ -78,12 +76,41 @@ class CA:
     print(f"Certificate emited to {subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}")
     return True if not root else certificate
 
-  def issue_certificate(self, csr_path: str):
+  def issue_certificate(self, data: dict):
     #cargar el CSR del cliente
-    with open(csr_path, "rb") as f:
-      csr = x509.load_pem_x509_csr(f.read())
+    subject = data['csr'].subject
 
+    #validar que el csr no haya sido emitido
+    with open(DB_ROOT, 'r') as f:
+      if f'{subject.get_attributes_for_oid(NameOID.ORGANIZATION_NAME)[0].value} - {subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}\n' in f.readlines():
+        return False
+    
+    #agregar la solicitud a la db
+    with open(DB_ROOT, 'a') as f:
+      f.write(f'{subject.get_attributes_for_oid(NameOID.ORGANIZATION_NAME)[0].value} - {subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}\n')
+
+    #agregar el csr a la ca
+    self._add_csr(data['csr'])
+    
     #crear el certificado firmado por la CA
-    return self._create_certificate(csr.subject)
+    return self._create_certificate(subject, data['key'])
+  
+  def _add_client(self, key: rsa.RSAPrivateKey):
+    #guardar la clave privada del cliente
+    os.makedirs(f'quorum-network/node{Network.client_number}/tls', exist_ok=True)
+
+    with open(os.path.join(f'quorum-network/node{Network.client_number}/tls', "private_key.pem"), "wb") as f:
+        f.write(key.private_bytes(encoding=serialization.Encoding.PEM, 
+                                  format=serialization.PrivateFormat.TraditionalOpenSSL, 
+                                  encryption_algorithm=serialization.NoEncryption()))
+        
+  def _add_csr(self, csr):
+    #guardar la clave privada y el CSR
+    csr_path = os.path.join("CA", f"{csr.subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}_csr.pem")
+
+    with open(csr_path, "wb") as f:
+      f.write(csr.public_bytes(serialization.Encoding.PEM))
+
+    print(f"CSR emited by {csr.subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value}")
 
 ca = CA()
