@@ -2,7 +2,6 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography import x509
 from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import serialization, hashes
-from src.services.network import Network
 import os
 
 class Client:
@@ -16,17 +15,16 @@ class Client:
 
   def _create_private_key(self):
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-
-    #guardar la clave privada
-    os.makedirs(f'quorum-network/node{Network.client_number}/tls', exist_ok=True)
-
-    with open(os.path.join(f'quorum-network/node{Network.client_number}/tls', "private_key.pem"), "wb") as f:
-        f.write(key.private_bytes(encoding=serialization.Encoding.PEM, 
-                                  format=serialization.PrivateFormat.TraditionalOpenSSL, 
-                                  encryption_algorithm=serialization.NoEncryption()))
-        
     return key
-  
+
+    ##guardar la clave privada
+    #os.makedirs(f'quorum-network/node{Network.client_number}/tls', exist_ok=True)
+
+    #with open(os.path.join(f'quorum-network/node{Network.client_number}/tls', "private_key.pem"), "wb") as f:
+    #    f.write(key.private_bytes(encoding=serialization.Encoding.PEM, 
+    #                              format=serialization.PrivateFormat.TraditionalOpenSSL, 
+    #                              encryption_algorithm=serialization.NoEncryption()))
+        
   #emitir un csr
   def issue_csr(self):
     csr = x509.CertificateSigningRequestBuilder().subject_name(x509.Name([
@@ -37,11 +35,7 @@ class Client:
       x509.NameAttribute(NameOID.COMMON_NAME, self._common_name),
     ])).sign(self._private_key, hashes.SHA256())
   
-    #guardar la clave privada y el CSR
-    csr_path = os.path.join("CA", f"{self._common_name}_csr.pem")
-
-    with open(csr_path, "wb") as f:
-      f.write(csr.public_bytes(serialization.Encoding.PEM))
-
-    print(f"CSR emited by {self._common_name}")
-    return csr_path
+    return {
+      'csr': csr,
+      'key': self._private_key
+    }
