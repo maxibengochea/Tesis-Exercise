@@ -33,9 +33,9 @@ def issue_csr():
       'message': 'CSR already emited' 
     })
   
-  Network.config_start_node()
+  Network.add_conn()
   Network.config_docker_compose()
-  Network.config_start_network()
+  Network.config_json()
   
   return jsonify({
     'valid': True,
