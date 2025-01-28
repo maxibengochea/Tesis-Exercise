@@ -8,6 +8,10 @@ export function SuccesfulIssue() {
   const { width, height } = useWindowSize()
   const successfulIssue = useIssueStore(state => state.successfulIssue)
 
+  const handleClick = () => {
+    navigate('/')
+  }
+
   return successfulIssue && (
     <main className="[background:linear-gradient(#1e293b,white)] h-[100vh] flex items-center justify-center">
       <ReactConfetti
@@ -18,7 +22,7 @@ export function SuccesfulIssue() {
         <h1 className="font-bold text-white text-[25px]">Succesful emited CSR</h1>
         <button 
           className="bg-sky-600 text-white font-bold my-[10px] p-2 hover:bg-sky-900" 
-          onClick={() => navigate('/')}
+          onClick={handleClick}
         >
           Ok
         </button>
