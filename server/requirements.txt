@@ -1,4 +1,5 @@
 cryptography
-Flask
-Flask-Cors
+flask
+flask-cors
 python-dotenv
+web3
