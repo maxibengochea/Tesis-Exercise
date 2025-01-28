@@ -1,8 +1,7 @@
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography import x509
 from cryptography.x509.oid import NameOID
-from cryptography.hazmat.primitives import serialization, hashes
-import os
+from cryptography.hazmat.primitives import hashes
 
 class Client:
   def __init__(self, organization_name='', common_name='', country='CU', state='La Habana', locality='Playa', ):
@@ -34,8 +33,10 @@ class Client:
       x509.NameAttribute(NameOID.ORGANIZATION_NAME, self._organization_name),
       x509.NameAttribute(NameOID.COMMON_NAME, self._common_name),
     ])).sign(self._private_key, hashes.SHA256())
-  
+
     return {
       'csr': csr,
-      'key': self._private_key
+      'private_key': self._private_key,
+      'public_key': self._private_key.public_key()
     }
+  
