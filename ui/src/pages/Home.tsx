@@ -53,7 +53,7 @@ const FieldForm = ({ id, name, onChange, children }: FieldFormProps) => {
         {children}
       </label>
       <input
-        className="px-5 py-1 mx-5 w-[95%] text-black"
+        className="px-1 py-1 mx-5 w-[95%] text-black"
         id={id} 
         type='text'
         onChange={onChange}
