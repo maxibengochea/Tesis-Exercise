@@ -1,16 +1,14 @@
 START = '''export PRIVATE_CONFIG=ignore
-geth --datadir data 
-    --networkid 1337 --nodiscover --verbosity 5 
-    --syncmode full 
-    --istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints 
-    --http --http.addr {1} --http.port 2200{0} --http.corsdomain "*" --http.vhosts "*" 
-    --ws --ws.addr {1} --ws.port 3200{0} --ws.origins "*" 
-    --http.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul 
-    --ws.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul 
-    --unlock $(grep -o '"address": *"[^"]*"' ./data/keystore/accountKeystore | grep -o '"[^"]*"$' | sed 's/"//g') --allow-insecure-unlock --password ./data/keystore/accountPassword 
-    --port 3030{0}
-    --tlskeyfile "/tls/private_key.pem" 
-    --tlscertfile "/tls/cert.pem" 
-    --tlsca "/tls/root_cert.pem"'''
+  geth --datadir data/data
+      --networkid 1337 --nodiscover --verbosity 5 
+      --syncmode full
+      --istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints
+      --http --http.addr 0.0.0.0 --http.port 8545 --http.corsdomain "*" --http.vhosts "*" 
+      --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.origins "*" 
+      --http.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul 
+      --ws.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul 
+      --unlock {0} --allow-insecure-unlock
+      --ptm.tls.mode strict --ptm.tls.rootca data/data/tls/root_cert.pem --ptm.tls.clientcert data/data/tls/cert.pem --ptm.tls.clientkey data/data/tls/private_key.pem --ptm.tls.insecureskipverify
+      --port 30303'''
 
-INIT = '''geth --datadir data init data/data/genesis.json'''
+INIT = '''geth --datadir data/data init data/data/genesis.json'''
