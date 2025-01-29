@@ -1,4 +1,4 @@
-from src.assets.start_node_template import START, INIT
+from src.assets.start_node_template import START, INIT, VALIDATIONS
 from src.assets.docker_compose_node_template import DOCKER_COMPOSE_NODE
 from src.assets.genesis_template import GENESIS
 from eth_account import Account
@@ -52,7 +52,8 @@ class Network:
     node_name = f'node{cls.client_number}'
     account = cls._accounts[-1]
 
-    content = f'{INIT} & \n\nwait\n\n'
+    content = f'{VALIDATIONS}\n\nwait\n\n' 
+    content += f'{INIT}\n\nwait\n\n'
     content += START.format(account.address[2:])
 
     #configurar run.sh
