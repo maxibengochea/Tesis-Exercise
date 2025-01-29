@@ -15,15 +15,7 @@ class Client:
   def _create_private_key(self):
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     return key
-
-    ##guardar la clave privada
-    #os.makedirs(f'quorum-network/node{Network.client_number}/tls', exist_ok=True)
-
-    #with open(os.path.join(f'quorum-network/node{Network.client_number}/tls', "private_key.pem"), "wb") as f:
-    #    f.write(key.private_bytes(encoding=serialization.Encoding.PEM, 
-    #                              format=serialization.PrivateFormat.TraditionalOpenSSL, 
-    #                              encryption_algorithm=serialization.NoEncryption()))
-        
+  
   #emitir un csr
   def issue_csr(self):
     csr = x509.CertificateSigningRequestBuilder().subject_name(x509.Name([
@@ -39,4 +31,3 @@ class Client:
       'private_key': self._private_key,
       'public_key': self._private_key.public_key()
     }
-  
